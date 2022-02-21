@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var param = [' src/.keep ', " src/ffff/.keep ", " src/ffff/aa.js ",'fffff/ffff.js','ffff/bbb.js ']
+
+        var g_rootData = []; //全局变量  //先拿到一个根目录里面的第一个数据:
+        var vChild = {}
+        g_rootData = {
+            sPath:'',
+            sName: '',
+            sChild: []
+        };
+
+        for (var i = 0; i < param.length; i++) {
+            console.log('i===',i,'g_rootData',g_rootData)
+
+            InsertIntoTree(param[i], g_rootData);// 循环里面调用
+           // 
+        }
+
+        function InsertIntoTree(param, node) //递归遍历
+        {
+            console.log("param: " + param + " ,node: " + node.sName);
+            var iFind = param.indexOf('/');
+           console.log("iFind = " + iFind);
+            var vName = param;
+            var vPath = "";
+            if (iFind > 0) {
+                vPath = param;
+                vName = vName.slice(iFind+1, vName.length);
+                vPath = vPath.slice(0, iFind);
+                console.log("vPath: " + vPath + " ,vName: " + vName);
+            }
+           console.log("iFind: " + iFind + " ,vName: " + vName + " ,path: " + vPath);
+            var vChild;
+            console.log('vPath.length',vPath.length)
+           
+            vChild =
+            {   sPath: vPath,
+                sName: vName,
+                sChild: []
+            }
+            if(node.sChild.length){
+                findPath(vPath,node.sChild)
+            }else{
+                node.sChild.push(vChild);
+            }
+            
+            //
+            if (vPath.length) {
+               InsertIntoTree(vName, vChild);
+            }
+           // return node
+        }
+        function findPath(path,vChild){
+            console.log('vChild',vChild)
+            vChild.map(val=>{
+                if(val.sPath==path){
+                    val.sChild.push(vChild);
+                }else{
+                    findPath(path,val.sChild)
+                }
+                return val
+            })
+        }
+        console.log(g_rootData)
+        function printTree(node, path)   //输出打印
+        {
+           console.log("path: " + path + " ,name:" + node.sName);
+            var i;
+            var vNextPath = node.sName;
+            if (path.length) {
+                vNextPath = path + "\\" + node.sName;
+            }
+
+            for (i = 0; i < node.sChild.length; i++) {
+                printTree(node.sChild[i], vNextPath);
+            }
+        }
+        //printTree(g_rootData)
+
+    </script>
+</body>
+
+</html>
