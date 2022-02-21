@@ -1,0 +1,145 @@
+var $codeReviewPanel = $('.code-review-panel')
+
+  var list = [] 
+  var _list = []
+   var _checkedCheck
+   var _checkedTest
+  $('.js-close-review').click(function(){
+    $('#code_review_btn').popup('hide')
+    
+  })
+  $('#code_review_btn').popup ({
+    inline: true,
+    popup: $codeReviewPanel,
+    position: 'bottom right',
+    on: 'click'
+  }).show(function(){
+    list = document.querySelectorAll(".radio-item");
+   //var checkedCheck = document.querySelector(".code-review-panel .checkbox-check");
+     //var checkedTest = document.querySelector(".code-review-panel .checkbox-test");
+    _checkedCheck = $codeReviewPanel.find(".checkbox-check");
+    _checkedTest = $codeReviewPanel.find(".checkbox-test");
+  })
+  list.forEach(function (item) {
+    item.onclick = function() {
+      var checkedOption = document.querySelector(".code-review-panel .checked"); //获取选中的checked类
+      checkedOption && checkedOption.classList.remove("checked"); //清除所有类
+      this.classList.add("checked"); //this添加类
+      if(this.classList.contains("has-checkbox")){
+        $('input:checkbox').prop("checked", true);//or
+        //_checkedCheck.classList.add("checked"); //清除所有类
+        //_checkedTest.classList.add("checked"); 
+        _checkedCheck.addClass("checked"); //清除所有类
+        _checkedTest.addClass("checked"); 
+        
+      }else{
+        _checkedCheck.removeClass("checked"); //清除所有类
+        _checkedTest.removeClass("checked"); 
+        $('input:checkbox').prop("checked", false);//or
+      }
+      
+    }
+  })
+  _checkedCheck.on("click", function (e) {
+    console.log(333333333)
+    console.log(this.classList.contains("checked"))
+    var checkedOption = document.querySelector(".code-review-panel .radio-checked .checked"); //获取选中的checked类
+     checkedOption && checkedOption.classList.remove("checked"); //清除所有类
+    if(this.classList.contains("checked")){
+      this.classList.remove("checked"); 
+      $("input[name='checkbox-check']").prop("checked", false);//or
+    }else{
+      this.classList.add("checked"); 
+      $("input[name='checkbox-check']").prop("checked", true);//or
+      console.log('checkedOption',checkedOption)
+      if(_checkedTest.hasClass("checked")){
+        var hasCheckbox = document.querySelector(".code-review-panel .radio-checked .has-checkbox"); 
+        hasCheckbox.classList.add("checked") 
+      }
+    }
+  })
+  _checkedTest.on("click", function (e) {
+     var checkedOption = document.querySelector(".code-review-panel .radio-checked .checked"); //获取选中的checked类
+     checkedOption && checkedOption.classList.remove("checked"); //清除所有类
+     if(this.classList.contains("checked")){
+      this.classList.remove("checked"); 
+      $("input[name='checkbox-test']").prop("checked", false);//or
+    }else{
+      this.classList.add("checked"); 
+      $("input[name='checkbox-test']").prop("checked", true);//or
+      if(_checkedCheck.hasClass("checked")){
+        var hasCheckbox = document.querySelector(".code-review-panel .radio-checked .has-checkbox"); 
+        hasCheckbox.classList.add("checked") 
+      }
+    }
+  })
+
+
+
+ <el-popover
+        :visible-arrow="false"
+        ref="batchSuggestionPopover"
+        placement="bottom-end"
+        transition="transition fade-down"
+        trigger="click"
+      >
+        <div slot="reference" class="ui button orange code-review-btn">
+          代码评审
+          <div class="ui mini circular label">{{ batchStatus.total }}</div>
+        </div>
+        <div class="ui commit-review form">
+          <div class="field">
+            <label>
+              代码评审 <span class="fs-12 mb-1 ml-1 sub-title"> {{ $t('suggestion.tip.batch_submit', { count: batchStatus.total }) }}</span>
+            </label>
+            <div class="ui mini input mt-1 mb-2">
+              <editor
+                ref="editor"
+                v-model="comment"
+              />
+               <el-radio-group v-model="radio">
+                 <div class="radio-item">
+                    <el-radio :label="3">评论 </el-radio>
+                    <div class="label-des"> 仅标记为评论</div>
+                 </div>
+                 <div class="radio-item">
+                    <el-radio :label="1">通过</el-radio>
+                    <div class="label-des"> 提交评论并通过 </div>
+                  <div class="checked-item"> 
+                    <div class="radio-item">
+                      <el-checkbox v-model="checked">审查通过</el-checkbox>
+                      <div class="label-des"> 提交评论并审查通过  </div>
+                    </div>
+                    <div class="radio-item ml-2">
+                      <el-checkbox v-model="checked2">测试通过</el-checkbox>
+                      <div class="label-des"> 提交评论并测试通过  </div>
+                    </div>
+                   </div>
+                 </div>
+                  <div class="radio-item">
+                    <el-radio :label="4">评审</el-radio>
+                     <div class="label-des"> 合并前需要处理的评论 </div>
+                 </div>
+                </el-radio-group>
+            </div>
+          </div>
+          <div class="field">
+            <div
+              class="ui orange button mr-1"
+              :class="{ 'loading disabled': batchSuggestion.isSubmitting }"
+              @click="submitBatchSuggestion"
+            >
+              {{ $t('submit') }}
+            </div>
+            <div class="ui blank button" @click="cancelBatchSuggestion">
+              {{ $t('cancel') }}
+            </div>
+            <span class="success-tip" v-if="batchSuggestion.waitToReload">
+              {{ $t('suggestion.tip.wait_to_reload', { second: batchSuggestion.timeTick }) }}
+            </span>
+          </div>
+        </div>
+      </el-popover>
+  
+  
+ 
